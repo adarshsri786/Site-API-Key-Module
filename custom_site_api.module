@@ -25,7 +25,7 @@ function custom_site_api_form_alter(&$form, FormStateInterface $form_state, $for
         '#description' => t('An API Key to access site pages in JSON format.'),
       );
       //updating submit button value
-      $form['actions']['submit']['#value'] = t('Update configuration');
+      $form['actions']['submit']['#value'] = t('Update Configuration');
       //adding submit button handler
       $form['#submit'][] = 'custom_submit_handler';
   }
