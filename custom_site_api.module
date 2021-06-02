@@ -1,0 +1,47 @@
+<?php
+
+/**
+ * @file
+ * This is the module to add custom settings related to site.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_form_alter().
+ *
+ * @param $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ * @param $form_id
+ */
+function custom_site_api_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  switch ($form_id) {
+    case "system_site_information_settings":
+      $config = \Drupal::configFactory()->getEditable('system.site');
+      $form['site_information']['siteapikey'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Site API Key'),
+        '#default_value' => $config->get('siteapikey') ?: 'No API Key yet',
+        '#description' => t('An API Key to access site pages in JSON format.'),
+      );
+      //updating submit button value
+      $form['actions']['submit']['#value'] = t('Update configuration');
+      //adding submit button handler
+      $form['#submit'][] = 'custom_submit_handler';
+  }
+}
+
+// function to handle form submit.
+function custom_submit_handler($form, &$form_state) {
+
+  $config = \Drupal::configFactory()->getEditable('system.site');
+  //getting site key from form
+  $site_api_key = $form_state->getValue('siteapikey');
+
+  //setting site key valu to config
+  $config->set('siteapikey', $site_api_key);
+  $config->save();
+
+  // Add message that Site API Key has been set
+  \Drupal::messenger()->addStatus('The Site API Key has been saved with value ' . $site_api_key);
+}
